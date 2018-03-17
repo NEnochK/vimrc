@@ -40,7 +40,7 @@ set autoindent
 set hlsearch
 
 "Cancel search with esc key
-nnoremap <silent> <Esc> :nohlsearch<Bar>:echo<CR>
+noremap <silent> <Enter> :nohlsearch<Bar>:echo<CR>
 
 "Show matching parens
 set showmatch
