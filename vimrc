@@ -4,7 +4,6 @@ syntax on
 
 "Colors
 set background=dark
-colorscheme onedark
 
 "Window size when vim opens
 set lines=35 columns=150
@@ -54,7 +53,33 @@ set laststatus=2
 "Doesn't display the vanilla status line (non LightLine status line)
 set noshowmode
 
-" NERDTress File highlighting
+"Automatically installs vim-plugin if it isn't installed already (mainly for
+"new machines
+if empty(glob('~/.dotfiles/vimrc/autoload/plug.vim'))
+  silent !curl -fLo ~/.dotfiles/vimrc/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+  silent !ln -s ~/.dotfiles/vimrc ~/.vim && rm ~/.vimrc
+else
+  "Opens NERDTree on vim open but focuses on the vim window
+  autocmd Vimenter * NERDTree
+  autocmd VimEnter * wincmd p
+  colorscheme onedark
+endif
+
+"Install plugins when :PlugInstall is called
+call plug#begin('~/.vim/plugged')
+Plug 'itchyny/lightline.vim'
+Plug 'tpope/vim-fugitive'
+Plug 'scrooloose/nerdtree'
+Plug 'airblade/vim-gitgutter'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
+Plug 'scrooloose/nerdcommenter'
+Plug 'vim-syntastic/syntastic'
+call plug#end()
+
+" NERDTrees File highlighting
 function! NERDTreeHighlightFile(extension, fg, bg, guifg, guibg)
   exec 'autocmd filetype nerdtree highlight ' . a:extension .' ctermbg='. a:bg .' ctermfg='. a:fg .' guibg='. a:guibg .' guifg='. a:guifg
   exec 'autocmd filetype nerdtree syn match ' . a:extension .' #^\s\+.*'. a:extension .'$#'
@@ -73,10 +98,6 @@ call NERDTreeHighlightFile('css', 'cyan', 'none', 'cyan', '#151515')
 call NERDTreeHighlightFile('coffee', 'Red', 'none', 'red', '#151515')
 call NERDTreeHighlightFile('js', 'Red', 'none', '#ffa500', '#151515')
 call NERDTreeHighlightFile('py', 'Magenta', 'none', '#ff00ff', '#151515')
-
-"Opens NERDTree on vim open but focuses on the vim window
-autocmd vimenter * NERDTree
-autocmd VimEnter * wincmd p
 
 "Close vim if only window left is NERDTree
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
@@ -101,24 +122,4 @@ let g:lightline = {
       \   'gitbranch': 'fugitive#head'
       \ },
       \ }
-
-"Automatically installs vim-plugin if it isn't installed already (mainly for
-"new machines
-if empty(glob('~/.vim/autoload/plug.vim'))
-  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
-    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
-endif
-
-"Install plugins when :PlugInstall is called
-call plug#begin('~/.vim/plugged')
-Plug 'itchyny/lightline.vim'
-Plug 'tpope/vim-fugitive'
-Plug 'scrooloose/nerdtree'
-Plug 'airblade/vim-gitgutter'
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'junegunn/fzf.vim'
-Plug 'scrooloose/nerdcommenter'
-Plug 'vim-syntastic/syntastic'
-call plug#end()
 
